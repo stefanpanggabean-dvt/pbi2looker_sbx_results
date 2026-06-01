@@ -1,2 +1,2 @@
-connection: "pbi_commerce"
+connection: "looker_connection"
 include: "/explores/commerce.explore.lkml"
