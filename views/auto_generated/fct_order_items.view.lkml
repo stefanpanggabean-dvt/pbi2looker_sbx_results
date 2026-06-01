@@ -1,0 +1,93 @@
+view: fct_order_items {
+  sql_table_name: commerce.fact__order_items ;;
+
+  dimension: id {
+    type: number
+    sql: ${TABLE}.id ;;
+  }
+
+  dimension: order_id {
+    type: number
+    sql: ${TABLE}.order_id ;;
+  }
+
+  dimension: sk_user_id {
+    type: number
+    hidden: yes
+    sql: ${TABLE}.user_id ;;
+  }
+
+  dimension: sk_product_id {
+    type: number
+    hidden: yes
+    sql: ${TABLE}.product_id ;;
+  }
+
+  dimension: inventory_item_id {
+    type: number
+    sql: ${TABLE}.inventory_item_id ;;
+  }
+
+  dimension: status {
+    type: string
+    sql: ${TABLE}.status ;;
+  }
+
+  dimension_group: sk_created_at {
+    type: time
+    timeframes: [raw, time, date, week, month, quarter, year]
+    sql: ${TABLE}.created_at ;;
+  }
+
+  dimension_group: sk_shipped_at {
+    type: time
+    timeframes: [raw, time, date, week, month, quarter, year]
+    sql: ${TABLE}.shipped_at ;;
+  }
+
+  dimension_group: sk_delivered_at {
+    type: time
+    timeframes: [raw, time, date, week, month, quarter, year]
+    sql: ${TABLE}.delivered_at ;;
+  }
+
+  dimension_group: sk_returned_at {
+    type: time
+    timeframes: [raw, time, date, week, month, quarter, year]
+    sql: ${TABLE}.returned_at ;;
+  }
+
+  dimension: sale_price {
+    type: number
+    sql: ${TABLE}.sale_price ;;
+  }
+
+  dimension: sk_created_date {
+    type: string
+    hidden: yes
+    sql: CAST(${created_at} AS DATE) ;;
+    description: "Extracts the date part from the created_at timestamp."
+  }
+
+  dimension: sk_shipped_date {
+    type: string
+    hidden: yes
+    sql: CAST(${shipped_at} AS DATE) ;;
+    description: "Extracts the date portion from the 'shipped_at' timestamp. Returns NULL if 'shipped_at' is NULL."
+  }
+
+  dimension: sk_delivered_date {
+    type: string
+    hidden: yes
+    sql: IF(IS NULL ${dt_delivered_at}, NULL, CAST(${dt_delivered_at} AS DATE)) ;;
+    description: "Extracts the date part from 'delivered_at'. Returns NULL if 'delivered_at' is blank."
+  }
+
+  dimension: sk_returned_date {
+    type: string
+    hidden: yes
+    sql: CAST(${fct_order_items.returned_at} AS DATE) ;;
+    description: "Extracts the date part from the 'returned_at' timestamp, returning NULL if 'returned_at' is blank."
+  }
+
+}
