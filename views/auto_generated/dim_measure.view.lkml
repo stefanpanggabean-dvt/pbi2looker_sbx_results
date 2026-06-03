@@ -2,27 +2,27 @@ view: dim_measure {
   sql_table_name: commerce._Measure ;;
 
   measure: _Total_Revenue { type: sum sql: ${sale_price} ;;
-    description: "Total revenue calculated as the sum of sale prices."
+    description: "Calculates the total revenue by summing the sale price of order items."
   }
-  measure: _Order_Count { type: count_distinct sql: COUNT(DISTINCT ${sk_order}) ;;
-    description: "Counts the number of unique orders."
+  measure: _Order_Count { type: count_distinct sql: ${fact_order_items.order_id} ;;
+    description: "Count of distinct orders from fact order items."
   }
-  measure: _Avg_Order_Value { type: number sql: SAFE_DIVIDE(${_total_revenue}, ${_order_count}) ;;
-    description: "Calculates the average revenue per order by dividing total revenue by the total order count."
+  measure: _Avg_Order_Value { type: number sql: ${total_revenue} / ${order_count} ;;
+    description: "Calculates the average order value by dividing total revenue by the total number of orders."
   }
-  measure: _Total_Cost { type: sum sql: ${dim_products.cost} ;;
-    description: "Calculates the total cost by summing the cost of related products for each order item."
+  measure: _Total_Cost { type: sum sql: ${fact_order_items.dim_products.am_product_cost} ;;
+    description: "Total cost derived from product costs for each order item."
   }
-  measure: _Gross_Profit { type: number sql: ${total_revenue} - ${total_cost} ;;
-    description: "Calculates gross profit as total revenue minus total cost."
+  measure: _Gross_Profit { type: number sql: ${_Total_Revenue} - ${_Total_Cost} ;;
+    description: "Calculates gross profit by subtracting total cost from total revenue."
   }
-  measure: _Revenue_YTD { type: sum_over_time sql: ${total_revenue} ;;
-    description: "Calculates the year-to-date total revenue based on the date dimension."
+  measure: _Revenue_YTD { type: sum sql: SUM(CASE WHEN EXTRACT(YEAR FROM ${dt_date_raw}) = EXTRACT(YEAR FROM MAX(${dt_date_raw})) AND ${dt_date_raw} <= MAX(${dt_date_raw}) THEN ${revenue_amount} ELSE 0 END) ;;
+    description: "Calculates the year-to-date revenue up to the latest date present in the current filter context."
   }
-  measure: _Event_Count { type: count sql: 1 ;;
-    description: "Counts the total number of events from the fact__events table."
+  measure: _Event_Count { type: count sql: ${fact__events.sk_event} ;;
+    description: "Counts the total number of events from the 'fact__events' table. Assumes 'fact__events' is joined and has a primary key 'sk_event'."
   }
   measure: _Session_Count { type: count_distinct sql: ${session_id} ;;
-    description: "Number of unique sessions recorded."
+    description: "Counts the number of unique user sessions."
   }
 }

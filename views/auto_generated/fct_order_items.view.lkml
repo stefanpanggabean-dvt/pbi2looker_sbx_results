@@ -41,26 +41,26 @@ view: fct_order_items {
 
   dimension: sk_created_date { type: string
     hidden: yes
-    sql: DATE(${sk_created_at_raw}) ;;
-    description: "Extracts the date part from the order item creation timestamp."
+    sql: CAST(${sk_created_at_raw} AS DATE) ;;
+    description: "Extracts the date component from the order item creation timestamp."
   }
 
   dimension: sk_shipped_date { type: string
     hidden: yes
     sql: DATE(${sk_shipped_at_raw}) ;;
-    description: "The date when the order item was shipped. Returns NULL if the item has not been shipped yet."
+    description: "The date when the order item was shipped, extracted from the shipped_at timestamp. Returns NULL if the item has not been shipped."
   }
 
   dimension: sk_delivered_date { type: string
     hidden: yes
-    sql: DATE(${sk_delivered_at_raw}) ;;
-    description: "The date part of the delivered_at timestamp, null if delivered_at is blank."
+    sql: CAST(${sk_delivered_at_raw} AS DATE) ;;
+    description: "The date when the order item was delivered, extracted from the delivered_at timestamp. Returns NULL if not delivered."
   }
 
   dimension: sk_returned_date { type: string
     hidden: yes
-    sql: DATE(${sk_returned_at_raw}) ;;
-    description: "Extracts the date portion from the returned_at timestamp. Null if the item was not returned."
+    sql: CASE WHEN ${sk_returned_at_raw} IS NULL THEN NULL ELSE DATE(${sk_returned_at_raw}) END ;;
+    description: "The date when the item was returned, extracted from the returned_at timestamp."
   }
 
 }
