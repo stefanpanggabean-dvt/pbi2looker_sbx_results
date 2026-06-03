@@ -41,22 +41,26 @@ view: fct_order_items {
 
   dimension: sk_created_date { type: string
     hidden: yes
-    sql: DATE(YEAR(${created_at}), MONTH(${created_at}), DAY(${created_at})) ;;
+    sql: DATE(${sk_created_at_raw}) ;;
+    description: "Extracts the date part from the order item creation timestamp."
   }
 
   dimension: sk_shipped_date { type: string
     hidden: yes
-    sql: IF(ISBLANK(${shipped_at}), BLANK(), DATE(YEAR(${shipped_at}), MONTH(${shipped_at}), DAY(${shipped_at}))) ;;
+    sql: ${sk_shipped_at_date} ;;
+    description: "Date part of the shipment timestamp, derived from sk_shipped_at. Returns NULL if sk_shipped_at is NULL."
   }
 
   dimension: sk_delivered_date { type: string
     hidden: yes
-    sql: IF(ISBLANK(${delivered_at}), BLANK(), DATE(YEAR(${delivered_at}), MONTH(${delivered_at}), DAY(${delivered_at}))) ;;
+    sql: DATE(${sk_delivered_at_raw}) ;;
+    description: "Extracts the delivery date from the raw delivery timestamp. Returns NULL if the timestamp is not available."
   }
 
   dimension: sk_returned_date { type: string
     hidden: yes
-    sql: IF(ISBLANK(${returned_at}), BLANK(), DATE(YEAR(${returned_at}), MONTH(${returned_at}), DAY(${returned_at}))) ;;
+    sql: DATE(${sk_returned_at_raw}) ;;
+    description: "The date when the order item was returned, derived from the returned_at timestamp. Returns NULL if the item has not been returned."
   }
 
 }
