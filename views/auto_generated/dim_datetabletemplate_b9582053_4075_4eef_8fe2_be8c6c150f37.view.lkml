@@ -4,27 +4,33 @@ view: dim_datetabletemplate_b9582053_4075_4eef_8fe2_be8c6c150f37 {
   dimension_group: dt_date { type: time timeframes: [raw, time, date, week, month, quarter, year] sql: ${TABLE}.Date ;; }
 
   dimension: year { type: number
-    sql: YEAR(${Date}) ;;
+    sql: EXTRACT(YEAR FROM ${dt_date_raw}) ;;
+    description: "Extracts the year from the date field."
   }
 
   dimension: monthno { type: number
-    sql: MONTH(${Date}) ;;
+    sql: EXTRACT(MONTH FROM ${dt_date_raw}) ;;
+    description: "Extracts the month number from the date field."
   }
 
   dimension: month { type: string
-    sql: FORMAT(${Date}, "MMMM") ;;
+    sql: FORMAT_DATE('%B', ${dt_date_raw}) ;;
+    description: "Full month name derived from the date column."
   }
 
   dimension: quarterno { type: number
-    sql: INT((${MonthNo} + 2) / 3) ;;
+    sql: FLOOR((${monthno} + 2) / 3) ;;
+    description: "Quarter number derived from the month number."
   }
 
   dimension: quarter { type: string
-    sql: "Qtr " & ${QuarterNo} ;;
+    sql: CONCAT('Qtr ', ${quarterno}) ;;
+    description: "Concatenates 'Qtr ' with the quarter number to form a descriptive quarter string."
   }
 
   dimension: day { type: number
-    sql: DAY(${Date}) ;;
+    sql: EXTRACT(DAY FROM ${dt_date_raw}) ;;
+    description: "Day of the month extracted from the date."
   }
 
 }
