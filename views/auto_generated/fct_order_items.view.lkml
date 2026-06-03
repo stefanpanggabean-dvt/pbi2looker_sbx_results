@@ -41,26 +41,26 @@ view: fct_order_items {
 
   dimension: sk_created_date { type: string
     hidden: yes
-    sql: DATE(${fct_order_items.sk_created_at_raw}) ;;
-    description: "Extracts the date component from the order item creation timestamp."
+    sql: DATE(${sk_created_at_raw}) ;;
+    description: "The date when the order item was created."
   }
 
   dimension: sk_shipped_date { type: string
     hidden: yes
-    sql: CASE WHEN ${sk_shipped_at_raw} IS NULL THEN NULL ELSE DATE(EXTRACT(YEAR FROM ${sk_shipped_at_raw}), EXTRACT(MONTH FROM ${sk_shipped_at_raw}), EXTRACT(DAY FROM ${sk_shipped_at_raw})) END ;;
-    description: "Extracts the date component from the 'shipped_at' timestamp. Returns NULL if 'shipped_at' is NULL."
+    sql: DATE(${sk_shipped_at_raw}) ;;
+    description: "Extracts the date part from the shipped_at timestamp, returning NULL if shipped_at is NULL."
   }
 
   dimension: sk_delivered_date { type: string
     hidden: yes
-    sql: IF(IS NULL ${sk_delivered_at_raw}, NULL, DATE(${sk_delivered_at_raw})) ;;
-    description: "Delivered date derived from the 'delivered_at' timestamp, returning NULL if 'delivered_at' is blank."
+    sql: CAST(${fct_order_items.sk_delivered_at_raw} AS DATE) ;;
+    description: "Delivered date extracted from the 'delivered_at' timestamp, returning NULL if 'delivered_at' is blank."
   }
 
   dimension: sk_returned_date { type: string
     hidden: yes
-    sql: IF(${sk_returned_at_raw} IS NULL, NULL, CAST(${sk_returned_at_raw} AS DATE)) ;;
-    description: "The calendar date when the order item was returned. Null if not returned."
+    sql: CAST(${fct_order_items.sk_returned_at_raw} AS DATE) ;;
+    description: "The date part of when the order item was returned, if available."
   }
 
 }

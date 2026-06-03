@@ -66,8 +66,8 @@ view: dim_users {
 
   dimension: sk_signup_date { type: string
     hidden: yes
-    sql: DATE(EXTRACT(YEAR FROM ${dim_users.sk_created_at_raw}), EXTRACT(MONTH FROM ${dim_users.sk_created_at_raw}), EXTRACT(DAY FROM ${dim_users.sk_created_at_raw})) ;;
-    description: "Signup date derived from the creation timestamp."
+    sql: CAST(${dim_users.sk_created_at_raw} AS DATE) ;;
+    description: "The date when the user signed up, derived from the created_at timestamp."
   }
 
 }
