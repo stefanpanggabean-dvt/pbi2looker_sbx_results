@@ -1,28 +1,28 @@
 view: dim_measure {
   sql_table_name: commerce._Measure ;;
 
-  measure: _Total_Revenue { type: sum sql: ${fct_order_items.sale_price} ;;
-    description: "Calculates the total revenue from the sale price of order items."
+  measure: total_revenue { type: sum sql: ${fct_order_items.sale_price} ;;
+    description: "The sum of the sale price for all order items."
   }
-  measure: _Order_Count { type: count_distinct sql: ${fct_order_items.order_id} ;;
-    description: "Count of distinct order IDs from the order items fact table."
+  measure: order_count { type: count_distinct sql: ${fct_order_items.order_id} ;;
+    description: "Counts the number of distinct orders."
   }
-  measure: _Avg_Order_Value { type: number sql: ${total_revenue} / ${order_count} ;;
-    description: "Calculates the average order value by dividing total revenue by the order count."
+  measure: avg_order_value { type: number sql: SAFE_DIVIDE(${total_revenue}, ${order_count}) ;;
+    description: "Calculates the average order value by dividing total revenue by the number of orders."
   }
-  measure: _Total_Cost { type: sum sql: ${dim_products.cost} ;;
-    description: "Calculates the total cost by summing the cost of products associated with each order item."
+  measure: total_cost { type: sum sql: ${dim_products.cost} ;;
+    description: "Total cost of all order items, derived from the cost of related products."
   }
-  measure: _Gross_Profit { type: sum sql: ${_total_revenue} - ${_total_cost} ;;
+  measure: gross_profit { type: number sql: ${total_revenue} - ${total_cost} ;;
     description: "Calculates gross profit as total revenue minus total cost."
   }
-  measure: _Revenue_YTD { type: sum sql: SUM(CASE WHEN ${dim_date.dt_date_raw} <= CURRENT_DATE() AND EXTRACT(YEAR FROM ${dim_date.dt_date_raw}) = EXTRACT(YEAR FROM CURRENT_DATE()) THEN ${sale_amount} ELSE 0 END) ;;
-    description: "Total revenue for the current year to date. This translates the DAX `TOTALYTD` function on `_Total_Revenue`, summing the underlying `sale_amount` (assuming `_Total_Revenue` aggregates this field) for the current year up to the current date, using the `dim_date.dt_date_raw` field for date context."
+  measure: revenue_ytd { type: number sql: SUM(CASE WHEN ${dim_date.sk_date} <= CURRENT_DATE() AND EXTRACT(YEAR FROM ${dim_date.sk_date}) = EXTRACT(YEAR FROM CURRENT_DATE()) THEN ${fct_orders.revenue} ELSE 0 END) ;;
+    description: "Year-to-date total revenue, calculated from the beginning of the current calendar year up to the current date. Assumes 'total_revenue' aggregates the underlying 'fct_orders.revenue' field."
   }
-  measure: _Event_Count { type: count sql: COUNT(${fct_events.pk_event}) ;;
-    description: "Counts the total number of events from the fact_events table."
+  measure: event_count { type: count sql: ${fct_events.sk_event} ;;
+    description: "Total count of events from the events fact table."
   }
-  measure: _Session_Count { type: count_distinct sql: ${fct_events.session_id} ;;
-    description: "Counts the number of unique sessions from the fact_events table."
+  measure: session_count { type: count_distinct sql: ${fct_events.session_id} ;;
+    description: "Counts the number of unique sessions."
   }
 }

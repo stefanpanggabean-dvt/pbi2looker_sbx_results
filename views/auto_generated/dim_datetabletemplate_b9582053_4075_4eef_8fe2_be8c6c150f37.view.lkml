@@ -5,7 +5,7 @@ view: dim_datetabletemplate_b9582053_4075_4eef_8fe2_be8c6c150f37 {
 
   dimension: year { type: number
     sql: EXTRACT(YEAR FROM ${dt_date_raw}) ;;
-    description: "The year extracted from the date field."
+    description: "Extracts the year from the raw date field."
   }
 
   dimension: monthno { type: number
@@ -19,18 +19,18 @@ view: dim_datetabletemplate_b9582053_4075_4eef_8fe2_be8c6c150f37 {
   }
 
   dimension: quarterno { type: number
-    sql: TRUNC(( ${monthno} + 2) / 3) ;;
+    sql: DIV(${monthno} + 2, 3) ;;
     description: "Calculates the quarter number based on the month number."
   }
 
   dimension: quarter { type: string
     sql: CONCAT('Qtr ', ${quarterno}) ;;
-    description: "The quarter number prefixed with 'Qtr ' (e.g., 'Qtr 1')."
+    description: "Quarter number prefixed with 'Qtr '"
   }
 
   dimension: day { type: number
     sql: EXTRACT(DAY FROM ${dt_date_raw}) ;;
-    description: "Day of the month extracted from the date."
+    description: "Extracts the day number from the date."
   }
 
 }
