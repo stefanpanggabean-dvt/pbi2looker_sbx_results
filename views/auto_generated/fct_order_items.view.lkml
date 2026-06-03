@@ -41,26 +41,22 @@ view: fct_order_items {
 
   dimension: sk_created_date { type: string
     hidden: yes
-    sql: DATE(${sk_created_at_raw}) ;;
-    description: "Extracts the date part from the order creation timestamp."
+    sql: DATE(YEAR(${created_at}), MONTH(${created_at}), DAY(${created_at})) ;;
   }
 
   dimension: sk_shipped_date { type: string
     hidden: yes
-    sql: CASE WHEN ${sk_shipped_at_raw} IS NULL THEN NULL ELSE CAST(${sk_shipped_at_raw} AS DATE) END ;;
-    description: "Date when the order item was shipped, or NULL if not yet shipped."
+    sql: IF(ISBLANK(${shipped_at}), BLANK(), DATE(YEAR(${shipped_at}), MONTH(${shipped_at}), DAY(${shipped_at}))) ;;
   }
 
   dimension: sk_delivered_date { type: string
     hidden: yes
-    sql: DATE(${sk_delivered_at_raw}) ;;
-    description: "Extracts the delivered date from the delivered_at timestamp. Returns NULL if delivered_at is blank."
+    sql: IF(ISBLANK(${delivered_at}), BLANK(), DATE(YEAR(${delivered_at}), MONTH(${delivered_at}), DAY(${delivered_at}))) ;;
   }
 
   dimension: sk_returned_date { type: string
     hidden: yes
-    sql: CASE WHEN ${sk_returned_at_raw} IS NULL THEN NULL ELSE DATE(${sk_returned_at_raw}) END ;;
-    description: "The date when the order item was returned, extracted from the returned_at timestamp."
+    sql: IF(ISBLANK(${returned_at}), BLANK(), DATE(YEAR(${returned_at}), MONTH(${returned_at}), DAY(${returned_at}))) ;;
   }
 
 }
