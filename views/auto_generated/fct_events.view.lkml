@@ -54,8 +54,8 @@ view: fct_events {
 
   dimension: sk_event_date { type: string
     hidden: yes
-    sql: CAST(${sk_created_at_raw} AS DATE) ;;
-    description: "The date part of the event creation timestamp."
+    sql: DATE(${sk_created_at_raw}) ;;
+    description: "Extracts the date part from the event creation timestamp."
   }
 
 }

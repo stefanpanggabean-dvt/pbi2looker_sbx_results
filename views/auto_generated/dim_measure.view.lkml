@@ -2,27 +2,27 @@ view: dim_measure {
   sql_table_name: commerce._Measure ;;
 
   measure: total_revenue { type: sum sql: ${fct_order_items.sale_price} ;;
-    description: "The sum of the sale price for all order items."
+    description: "Total revenue is the sum of sale prices from the fact order items."
   }
   measure: order_count { type: count_distinct sql: ${fct_order_items.order_id} ;;
-    description: "Counts the number of distinct orders."
+    description: "Calculates the distinct count of orders from the order items table."
   }
-  measure: avg_order_value { type: number sql: SAFE_DIVIDE(${total_revenue}, ${order_count}) ;;
-    description: "Calculates the average order value by dividing total revenue by the number of orders."
+  measure: avg_order_value { type: number sql: ${total_revenue} / NULLIF(${order_count}, 0) ;;
+    description: "Average order value calculated as total revenue divided by order count."
   }
-  measure: total_cost { type: sum sql: ${dim_products.cost} ;;
-    description: "Total cost of all order items, derived from the cost of related products."
+  measure: total_cost { type: sum sql: SUM(${fct_order_items.dim_products.cost}) ;;
+    description: "Total cost aggregated from the cost of related products for each order item."
   }
   measure: gross_profit { type: number sql: ${total_revenue} - ${total_cost} ;;
-    description: "Calculates gross profit as total revenue minus total cost."
+    description: "Calculates gross profit by subtracting total cost from total revenue."
   }
-  measure: revenue_ytd { type: number sql: SUM(CASE WHEN ${dim_date.sk_date} <= CURRENT_DATE() AND EXTRACT(YEAR FROM ${dim_date.sk_date}) = EXTRACT(YEAR FROM CURRENT_DATE()) THEN ${fct_orders.revenue} ELSE 0 END) ;;
-    description: "Year-to-date total revenue, calculated from the beginning of the current calendar year up to the current date. Assumes 'total_revenue' aggregates the underlying 'fct_orders.revenue' field."
+  measure: revenue_ytd { type: number sql: SUM(CASE WHEN ${dim_date.dt_date_raw} BETWEEN DATE_TRUNC(${dim_date.dt_date_raw}, YEAR) AND CURRENT_DATE() THEN ${total_revenue._sql} ELSE 0 END) ;;
+    description: "Calculates the total revenue year-to-date up to the current date."
   }
-  measure: event_count { type: count sql: ${fct_events.sk_event} ;;
-    description: "Total count of events from the events fact table."
+  measure: event_count { type: count sql: ${fct_events.event_id} ;;
+    description: "Counts the total number of event records."
   }
   measure: session_count { type: count_distinct sql: ${fct_events.session_id} ;;
-    description: "Counts the number of unique sessions."
+    description: "Counts the number of unique sessions from the events table."
   }
 }

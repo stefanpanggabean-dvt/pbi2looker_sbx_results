@@ -15,22 +15,22 @@ view: dim_datetabletemplate_b9582053_4075_4eef_8fe2_be8c6c150f37 {
 
   dimension: month { type: string
     sql: FORMAT_DATE('%B', ${dt_date_raw}) ;;
-    description: "Full month name derived from the date."
+    description: "Full month name (e.g., January) derived from the raw date."
   }
 
   dimension: quarterno { type: number
-    sql: DIV(${monthno} + 2, 3) ;;
-    description: "Calculates the quarter number based on the month number."
+    sql: FLOOR((${monthno} + 2) / 3) ;;
+    description: "Calculates the quarter number (1-4) based on the month number."
   }
 
   dimension: quarter { type: string
     sql: CONCAT('Qtr ', ${quarterno}) ;;
-    description: "Quarter number prefixed with 'Qtr '"
+    description: "Concatenates 'Qtr ' with the quarter number to form a descriptive quarter string."
   }
 
   dimension: day { type: number
     sql: EXTRACT(DAY FROM ${dt_date_raw}) ;;
-    description: "Extracts the day number from the date."
+    description: "Day of the month from the date."
   }
 
 }
