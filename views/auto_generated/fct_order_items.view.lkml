@@ -54,26 +54,26 @@ view: fct_order_items {
   dimension: sk_created_date {
     type: string
     hidden: yes
-    sql: CAST(${sk_created_at_raw} AS DATE) ;;
-    description: "Created date of the order item."
+    sql: DATE(${fct_order_items.sk_created_at_raw}) ;;
+    description: "The date part of the order creation timestamp."
   }
   dimension: sk_shipped_date {
     type: string
     hidden: yes
-    sql: DATE(${sk_shipped_at_raw}) ;;
-    description: "The date portion of the item's shipping timestamp."
+    sql: IF(${sk_shipped_at_raw} IS NULL, NULL, DATE(${sk_shipped_at_raw})) ;;
+    description: "Extracts the date part from the raw shipped timestamp, returning NULL if the timestamp is blank."
   }
   dimension: sk_delivered_date {
     type: string
     hidden: yes
-    sql: CAST(${dt_delivered_at_raw} AS DATE) ;;
-    description: "Extracts the delivered date from the raw delivered at timestamp. Returns NULL if the raw timestamp is blank."
+    sql: DATE(${sk_delivered_at_raw}) ;;
+    description: "Extracts the date part from the raw delivered timestamp."
   }
   dimension: sk_returned_date {
     type: string
     hidden: yes
-    sql: IF(${sk_returned_at_raw} IS NULL, NULL, CAST(${sk_returned_at_raw} AS DATE)) ;;
-    description: "The date when the item was returned, derived from the raw returned timestamp. Returns NULL if the raw timestamp is blank."
+    sql: IF(${sk_returned_at_raw} IS NULL, NULL, DATE(${sk_returned_at_raw})) ;;
+    description: "The date when an item was returned, derived from the raw returned_at timestamp."
   }
 
 }
